@@ -11,6 +11,8 @@ const session = require("express-session");
 const uuid = require("uuid");
 const bcrypt = require("bcrypt");
 const UserService = require("./src/user");
+const user = require("./src/user");
+const userService = require("./src/user/user.service");
 
 require("./src/config/passport");
 require("./src/config/local");
@@ -75,6 +77,8 @@ app.get("/profile", isLoggedIn, (req, res) => {
   res.render("profile.ejs", { user: req.user });
 });
 
+
+
 app.get(
   "/auth/google",
   passport.authenticate("google", {
@@ -134,7 +138,13 @@ app.post("/auth/local/signin",
   })
 );
 
-var port = process.env.PORT || process.env.VCAP_APP_PORT || 3000;
+app.get("/auth/users",async(req,res) => {
+   let users = await UserService.getUsers();
+   res.send({users})
+
+})
+
+var port = process.env.PORT || 3000;
 
 app.listen(port, function () {
   console.log(`SocialLogin Authentication Server listening on port ${port}`);
